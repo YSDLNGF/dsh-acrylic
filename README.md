@@ -15,13 +15,13 @@
 
 同一套主题，换不同壁纸的效果 —— 壁纸的颜色和明暗会透上来，界面跟着变，但文字始终清晰：
 
-| 秋叶 | 森林 |
+| 示例 1 | 示例 2 |
 | --- | --- |
-| ![arnaut](assets/screenshot-autumn.jpg) | ![forest](assets/screenshot-forest.jpg) |
+| ![示例 1](assets/示例1.jpg) | ![示例 2](assets/示例2.jpg) |
 
-| 雨天 | 樱花 |
-| --- | --- |
-| ![rain](assets/screenshot-rain.jpg) | ![sakura](assets/screenshot-sakura.jpg) |
+| 示例 3 |
+| --- |
+| ![示例 3](assets/示例3.jpg) |
 
 | 区域 | 表现 |
 | --- | --- |
