@@ -3,7 +3,7 @@
 > DeepSeek Harness 桌面版的**透明轻薄亚克力**主题。  
 > 窗口透出桌面壁纸，由 Windows 系统 Acrylic 材质负责模糊；页面分层雾面，输入栏与浮层保持可读。
 
-[原理](#原理) · [安装](#安装) · [调参](#调参) · [卸载](#卸载) · [已知限制](#已知限制)
+[效果](#效果) · [安装](#安装) · [调参](#调参) · [卸载](#卸载) · [已知限制](#已知限制)
 
 ---
 
@@ -21,78 +21,110 @@
 > 深色主题下文字会自动提亮：`label-primary/secondary/tertiary` 及底层
 > `bluish-200/300/400/600/700` 一并改为白色系，否则深底上发灰。
 
-## 原理
-
-**关键约束：窗口材质无法只用插件实现。**
-
-Windows 的 Acrylic / Mica 是 Electron `BrowserWindow` 的**构造参数**，只存在于主进程；而 DSH 插件运行在渲染进程侧，拿不到窗口对象。所以本仓库由两部分组成：
-
-| 部分 | 位置 | 职责 |
-| --- | --- | --- |
-| **补丁器** | `patch-asar.mjs` | 给 `app.asar` 内的 `main.js` 补上窗口材质参数 |
-| **插件** | `plugin/` | 页面那半边：分层雾面、提亮文字、可调参数 |
-
-### 补丁器怎么做（等字节修补）
-
-`app.asar` 内部是「头部 JSON + 各条目原始字节」，头部记录每个条目的 `offset` / `size` / `integrity`。若 `main.js` 变长，其后所有条目的 offset 都要重算，改动面极大。
-
-因此 `patch-asar.mjs` 采用**等字节**修补：
-
-1. 在主窗口 win32 分支插入 `backgroundMaterial: "acrylic"`；
-2. 同时从一段真实 JSDoc 注释里裁掉等长字节配平；
-3. 条目大小不变 → 头部 offset 全部保持原样，只更新该条目自身的 integrity 哈希。
-
-**两处刻意的重要取舍**：
-
-- **不加 `backgroundColor: "#00000000"`**。Electron 里显式设置透明背景色会与系统材质互斥，材质会被静默忽略（实测 `DWMWA_SYSTEMBACKDROP_TYPE` 始终为 0）。
-- **标题栏 overlay 颜色保持 `transparent`**。实测证明 `titleBarOverlay.color` 支持 alpha：不透明近黑会让标题栏纯黑，半透明会发灰，只有 `transparent` 才是纯亚克力。
-
-任何一步锚点不唯一、大小不匹配、哈希结构不符，都会直接抛错退出，绝不写出半成品。
-
-### 页面层为什么这样分层
-
-早期版本给每个容器都留一点 alpha，叠完接近不透明，观感发灰。现在改为**分层**：
-
-- 需要通透的地方（主面板、顶栏）→ 完全透明；
-- 需要读字的浮层 → **实色 + 百分比透明度**，不掺壁纸色，所以不会发灰。
-
-> 关于「模糊背后的聊天文字」：理论上是 `backdrop-filter` 的职责，但在本项目的透明窗口里实测采样不到内容（逐带测量边缘梯度，输入区与正文同样锐利），试过伪元素、z-index、去 `isolation`、blur 加到 56px 均无变化。因此改用高不透明度雾面替代。这个结论记录在案，避免重复踩坑。
+---
 
 ## 安装
 
-前置：Node.js 18+（打补丁时会用 `node --check` 校验语法）。Windows 11 22H2+。
+分两步，**第一步在界面点几下就行，第二步才需要命令行**。
+
+### 第 1 步：用 Harness 自带的「添加插件」
+
+> ⚠️ **顺序很重要**：先做这一步，DSH 会自行处理依赖与重启。
+> 做完它，插件已经能跑，页面那半边（透明、雾面、提亮文字）立即生效。
+
+1. 打开 Harness → **设置**
+2. 进入 **插件** → **插件市场**
+3. 点 **「添加插件」** 按钮（一般在市场页右上角）
+4. 粘贴本仓库地址：
+   ```
+   https://github.com/YSDLNGF/dsh-acrylic
+   ```
+5. 确认安装。Harness 会 clone 到
+   `~/.dsh/profiles/desktop/node_modules/dsh-acrylic`、登记 `bundles`，然后提示重启
+
+重启后进入 **设置 → 通用 → 透明亚克力**，看到滑块就说明成功了。
+
+> **为什么搜索框里可能搜不到？**
+> 插件市场的内容来自目录文件 `plugins.json`，托管在
+> [awesome-dsh-plugin](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin) 仓库。
+> 一个插件要被搜到，必须先向那个仓库提交 PR 收录（见下方「上架到插件市场」）。
+> **收录之前**，用上面的「添加插件」直接贴 GitHub 地址即可，
+> 功能完全一样，只是没有市场详情页和评分。
+
+### 上架到插件市场的状态
+
+本插件已按官方 [contributing.md](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/blob/main/contributing.md)
+的要求准备好仓库结构：
+
+| 要求 | 状态 |
+| --- | --- |
+| 根 `package.json` 声明 `dsh.bundle` | ✅ 已声明 `./plugin/cordis.patch.yml` |
+| 仓库有真实可用代码 | ✅ |
+| `screenshots.json`（市场展示截图） | ✅ `assets/screenshot-1.png` |
+| 分类 | `theme`（会进入市场的「主题」Tab，支持一键安装/切换/卸载） |
+| 仓库 topic `dsh-plugin` | 需要在 GitHub 仓库设置里添加 |
+| 仓库创建满 1 天 | 由官方 CI 自动检查 |
+
+收录方式是向
+[awesome-dsh-plugin](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin)
+提一个只含单个文件的 PR：
+
+```
+data/plugins/YSDLNGF__dsh-acrylic.yml
+```
+
+```yaml
+url: https://github.com/YSDLNGF/dsh-acrylic
+name: YSDLNGF/dsh-acrylic
+category: theme
+description:
+  en: Windows Acrylic window material plus layered frosted panels for the DeepSeek Harness desktop app.
+  zh: DeepSeek Harness 桌面版的 Windows 亚克力窗口材质与分层雾面效果。
+```
+
+合并后官网自动重建，市场里就能搜到了。
+
+### 第 2 步：让窗口透出壁纸（这一步仍需命令行）
+
+第 1 步只让页面半透明，但窗口本身还是不透明的 —— 壁纸透不出来。
+窗口材质是 Electron `BrowserWindow` 的**构造参数**，只存在于主进程，
+插件（运行在渲染进程侧）碰不到窗口对象，所以必须改 `app.asar`。
+
+这与现有同类插件（如 [dsh-desktop-glass](https://github.com/JianHeShui/dsh-desktop-glass)）
+的处境相同，没有纯插件方案。
 
 ```powershell
-git clone https://github.com/<你的账号>/dsh-acrylic.git
 cd dsh-acrylic
-```
-
-### 1. 装插件（页面那半边）
-
-```powershell
-node install.mjs
-```
-
-它会把 `plugin/` 复制到 `<DSH_HOME>\profiles\desktop\node_modules\dsh-acrylic`，并登记 `bundles` 与 `dependencies`。
-
-### 2. 打窗口材质补丁（需要重启）
-
-补丁要求 `app.asar` 不被占用，也就是 DSH 必须已退出。用下面的脚本托管：**它会等你退出、自动打补丁、再重启 DSH**，你只需从托盘退出一次。
-
-```powershell
-# 用计划任务托管，保证 DSH 退出不会把它一起杀掉
 powershell -ExecutionPolicy Bypass -File .\apply-when-closed.ps1
 ```
 
-参数：
+这个脚本会：
 
-- `-Material acrylic` 换成 `mica`
-- `-Asar <path>` / `-Exe <path>` 手动指定安装位置（默认自动探测）
-- `-NoRestart` 只打补丁，不重启
+1. 等你从托盘退出 Harness（它监测 `app.asar` 锁释放）
+2. 自动给 `app.asar` 打**等字节补丁**（主窗口加 `backgroundMaterial: acrylic`）
+3. 自动重启 Harness
 
-打完后窗口即可透出壁纸。
+**你只需要退出一次，剩下它自己完成。** 不会用命令行的话，
+也可以照着下面「手动」小节做。
 
-> 若窗口不透，前往「设置 → 个性化 → 颜色」确认已开启透明效果。
+安装完成后，窗口就能透出壁纸了。
+
+---
+
+## 卸载
+
+**只卸载插件（保留窗口补丁）**：在插件市场里点本插件的「卸载」按钮即可。
+
+**连同窗口材质一起还原**：
+
+```powershell
+node uninstall.mjs
+powershell -ExecutionPolicy Bypass -File .\restore-asar.ps1
+```
+
+两者都做完再重启，恢复原生外观。
+
+---
 
 ## 调参
 
@@ -117,37 +149,56 @@ glass.reset()                // 回默认
 
 改色值请直接编辑 `plugin/client.js` 顶部的 `GLASS_STYLE`，每个值旁都注明了由来。
 
-## 卸载
-
-```powershell
-node uninstall.mjs
-powershell -ExecutionPolicy Bypass -File .\restore-asar.ps1
-```
-
-`uninstall.mjs` 会移除 node_modules 里的插件、撤销 `bundles` 与 `dependencies` 登记；`restore-asar.ps1` 用备份还原 `app.asar`。
+---
 
 ## 已知限制
 
-- **Acrylic 失焦会变实**。Windows 降级材质行为，无法绕过。介意可用 `-Material mica`。
-- **DSH 更新会覆盖 `app.asar`**，补丁随之失效。重跑一次 `apply-when-closed.ps1` 即可。
-- **改动的是宿主程序**。请自行评估风险；本仓库提供备份与还原路径，且补丁脚本在锚点不匹配时会直接退出、不动已安装文件。
-- **模糊不了背后的聊天文字**。原因见上文「页面层为什么这样分层」。
+- **窗口材质补丁在 Harness 更新后失效**。更新会覆盖 `app.asar`，
+  重跑一次 `apply-when-closed.ps1` 即可。
+- **插件市场搜索**：需先向 [awesome-dsh-plugin](https://github.com/awesome-dsh-plugin)
+  提交 PR 收录。收录前请用「添加插件」按钮直接贴仓库地址安装。
+- **改的是宿主程序**。请自行评估风险；本仓库提供备份与还原路径，
+  且补丁脚本在锚点不匹配时会直接退出、不动已安装文件。
+- **Acrylic 失焦会变实**。Windows 降级材质行为，无法绕过。
+  介意可改用 `-Material mica`。
 
-## 目录
+---
 
-```
-plugin/               页面半部（客户端）
-  index.js            宿主半部（空操作）
-  client.js           样式注入 + 设置页 + 实时调参
-  cordis.patch.yml    bundle patch
-patch-asar.mjs        等字节 asar 补丁
-verify-asar.mjs       校验补丁是否落位
-install.mjs           安装插件
-uninstall.mjs         卸载插件
-apply-when-closed.ps1 等 DSH 退出 → 打补丁 → 重启
-restore-asar.ps1      还原 app.asar
-demo.html             本地效果预览页（不依赖 DSH）
-```
+## 需要自己编译安装吗
+
+不需要。本仓库是**即插即用**的 DSH 插件，不是需要 build 的前端项目：
+
+| 文件 | 作用 | 需要编译吗 |
+| --- | --- | --- |
+| `package.json` | 根 manifest（声明 `dsh.bundle`，供市场/命令行安装） | ❌ |
+| `plugin/` | 插件本体（页面半边） | ❌ 直接复制 |
+| `patch-asar.mjs` | 改 `app.asar` 的工具 | ❌ Node 直接跑 |
+| `apply-when-closed.ps1` | 自动化：等退出→打补丁→重启 | ❌ |
+| `install.mjs` / `uninstall.mjs` | 命令行方式装卸 | ❌ |
+
+用 Node 18+ 和 PowerShell 即可，**没有构建步骤**。
+
+---
+
+## 致谢
+
+**这一版由 AI 编写。**
+
+具体来说：从"我想让 harness 有透明轻薄亚克力效果"这句话开始，
+确认需求、逆向 `main.js` 里的窗口参数、发现 `backgroundColor` 与
+`backgroundMaterial` 互斥、逐层定位"发灰"来源、把侧栏收起按钮
+位移的 bug 定位到 `backdrop-filter` 创建包含块、到最后的分层雾面方案，
+全部由 AI Agent 与用户协作完成 —— 包括 `plugin/client.js` 里的每一条规则、
+每一个数值、以及这几百行中文注释。
+
+AI 在这个项目里也走了不少弯路：曾经连续多轮在错误假设上打转
+（以为调 `backdrop-filter` 的 blur 值就能糊掉背后的文字），
+直到做像素测量才发现它根本没有生效。这些失败结论也一并写进了注释，
+因为**知道什么行不通，和知道什么行得通同样有用**。
+
+如果你也在做类似的事，希望这个仓库能替你省掉那些来回试错的夜晚。
+
+踩过的坑都写在代码注释和「已知限制」里，欢迎提交 Issue 或 PR。
 
 ## License
 

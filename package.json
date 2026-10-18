@@ -1,0 +1,64 @@
+{
+  "name": "dsh-acrylic",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "DeepSeek Harness desktop: Windows Acrylic window material + layered frosted panels.",
+  "main": "plugin/index.js",
+  "exports": {
+    ".": "./plugin/index.js",
+    "./client": "./plugin/client.js",
+    "./cordis.patch.yml": "./plugin/cordis.patch.yml",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "plugin/",
+    "patch-asar.mjs",
+    "verify-asar.mjs",
+    "install.mjs",
+    "uninstall.mjs",
+    "apply-when-closed.ps1",
+    "restore-asar.ps1",
+    "README.md",
+    "LICENSE",
+    "screenshots.json"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./plugin/cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "immediately": true,
+      "inject": [
+        "@deepseek-ai/dsh-client-ui-settings"
+      ]
+    }
+  },
+  "meta": {
+    "title": "透明亚克力",
+    "description": "窗口级亚克力材质 + 分层雾面 + 实时调参。"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/YSDLNGF/dsh-acrylic.git"
+  },
+  "homepage": "https://github.com/YSDLNGF/dsh-acrylic#readme",
+  "bugs": {
+    "url": "https://github.com/YSDLNGF/dsh-acrylic/issues"
+  },
+  "keywords": [
+    "dsh",
+    "deepseek-harness",
+    "acrylic",
+    "mica",
+    "glass",
+    "theme",
+    "windows"
+  ],
+  "author": "YSDLNGF",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  }
+}

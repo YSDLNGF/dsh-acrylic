@@ -2,12 +2,11 @@
 backups/
 *.log
 *.pid
+.winrect.json
 
 # 调试中间文件
 _dryrun-main.js
 _check.mjs
-_*.png
-*.png
 
 # 本地配置
 node_modules/
