@@ -13,6 +13,16 @@
 
 ## 效果
 
+同一套主题，换不同壁纸的效果 —— 壁纸的颜色和明暗会透上来，界面跟着变，但文字始终清晰：
+
+| 秋叶 | 森林 |
+| --- | --- |
+| ![arnaut](assets/screenshot-autumn.jpg) | ![forest](assets/screenshot-forest.jpg) |
+
+| 雨天 | 樱花 |
+| --- | --- |
+| ![rain](assets/screenshot-rain.jpg) | ![sakura](assets/screenshot-sakura.jpg) |
+
 | 区域 | 表现 |
 | --- | --- |
 | 主面板 / 顶栏 | 完全透明，透出壁纸，模糊由系统 Acrylic 完成 |
