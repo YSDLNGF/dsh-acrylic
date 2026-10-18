@@ -1,0 +1,4 @@
+# dsh-acrylic 的 bundle patch：把插件插进 profile 的补丁层。
+- insert:
+    - id: dsh-acrylic
+      name: 'dsh-acrylic'

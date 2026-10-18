@@ -1,0 +1,28 @@
+{
+  "name": "dsh-acrylic",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "透明轻薄亚克力：窗口透出桌面壁纸（系统 Acrylic 模糊）+ 页面分层雾面玻璃。",
+  "main": "index.js",
+  "exports": {
+    ".": "./index.js",
+    "./client": "./client.js"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "immediately": true,
+      "inject": [
+        "@deepseek-ai/dsh-client-ui-settings"
+      ]
+    }
+  },
+  "meta": {
+    "title": "透明亚克力",
+    "description": "窗口级亚克力材质 + 分层雾面 + 实时调参。"
+  }
+}

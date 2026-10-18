@@ -1,0 +1,25 @@
+# 备份与运行时产物
+backups/
+*.log
+*.pid
+
+# 调试中间文件
+_dryrun-main.js
+_check.mjs
+_*.png
+*.png
+
+# 本地配置
+node_modules/
+.env
+.env.local
+
+# 编辑器
+.vscode/
+.idea/
+*.swp
+
+# 系统
+.DS_Store
+Thumbs.db
+desktop.ini
