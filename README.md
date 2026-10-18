@@ -1,5 +1,9 @@
 # dsh-acrylic
 
+> **本项目的代码与文档均由 AI 编写。**  
+> 从需求讨论、逆向 DSH 窗口参数、调试、到这份 README，全部由 AI Agent 与用户协作完成。
+> 详见文末「关于本项目」。
+
 > DeepSeek Harness 桌面版的**透明轻薄亚克力**主题。  
 > 窗口透出桌面壁纸，由 Windows 系统 Acrylic 材质负责模糊；页面分层雾面，输入栏与浮层保持可读。
 
@@ -23,75 +27,62 @@
 
 ---
 
+## 先分清两个「插件」入口
+
+DSH 里有两个容易混淆的地方，安装方式完全不同：
+
+| 入口 | 是什么 | 本插件怎么装 |
+| --- | --- | --- |
+| **设置 → 「插件」页 → 添加插件** | DSH **内置**的插件管理页，用 `dsh plugin add` 安装任意来源 | ✅ **推荐**，粘贴仓库地址即可 |
+| **插件市场**（dsh-market） | 一个**第三方社区插件**，它有自己的插件目录与详情页 | ⏳ 需先被该目录收录（见下文） |
+
+两者的关系是：插件市场本身也是装在「插件」页里的一个插件。它展示什么，取决于它自己的目录文件，与内置的「添加插件」无关。
+
+**所以：现在就能装，用第一种方式。** 想让它出现在插件市场里被搜到，需要走第三种方式（提交收录）。
+
+---
+
 ## 安装
 
-分两步，**第一步在界面点几下就行，第二步才需要命令行**。
-
-### 第 1 步：用 Harness 自带的「添加插件」
-
-> ⚠️ **顺序很重要**：先做这一步，DSH 会自行处理依赖与重启。
-> 做完它，插件已经能跑，页面那半边（透明、雾面、提亮文字）立即生效。
+### 第 1 步：在「插件」页添加（现在就能用）
 
 1. 打开 Harness → **设置**
-2. 进入 **插件** → **插件市场**
-3. 点 **「添加插件」** 按钮（一般在市场页右上角）
-4. 粘贴本仓库地址：
+2. 进入 **插件**（内置的那一页，不是插件市场）
+3. 点 **「添加插件」**
+4. 在弹出的输入框里填下面任意一种：
+
    ```
    https://github.com/YSDLNGF/dsh-acrylic
    ```
-5. 确认安装。Harness 会 clone 到
+
+   也接受这几种等价写法：
+
+   ```
+   https://github.com/YSDLNGF/dsh-acrylic.git
+   github:YSDLNGF/dsh-acrylic
+   ```
+
+   > 输入框提示是「输入插件的包名、GitHub 仓库地址或本地目录路径」。
+   > 本插件尚未发布到 npm，所以请用 **GitHub 地址**，不要填包名。
+
+5. 点「安装」，确认来源，Harness 会自己 clone 到
    `~/.dsh/profiles/desktop/node_modules/dsh-acrylic`、登记 `bundles`，然后提示重启
 
-重启后进入 **设置 → 通用 → 透明亚克力**，看到滑块就说明成功了。
+重启后进入 **设置 → 通用 → 透明亚克力**，看到滑块就说明页面那半边成功了。
 
-> **为什么搜索框里可能搜不到？**
-> 插件市场的内容来自目录文件 `plugins.json`，托管在
-> [awesome-dsh-plugin](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin) 仓库。
-> 一个插件要被搜到，必须先向那个仓库提交 PR 收录（见下方「上架到插件市场」）。
-> **收录之前**，用上面的「添加插件」直接贴 GitHub 地址即可，
-> 功能完全一样，只是没有市场详情页和评分。
+> **安装格式依据**：`@deepseek-ai/dsh-plugin-manager` 的 `parseInstallSpec()`
+> 接受 npm 包名、`file:`/绝对路径、`*.tgz`、以及 git 地址
+> （`github:owner/repo`、`git+https://…`、或宿主仓库 URL）。
+> 本仓库根 `package.json` 已声明 `dsh.bundle`，满足「可安装」的判定条件。
 
-### 上架到插件市场的状态
-
-本插件已按官方 [contributing.md](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/blob/main/contributing.md)
-的要求准备好仓库结构：
-
-| 要求 | 状态 |
-| --- | --- |
-| 根 `package.json` 声明 `dsh.bundle` | ✅ 已声明 `./plugin/cordis.patch.yml` |
-| 仓库有真实可用代码 | ✅ |
-| `screenshots.json`（市场展示截图） | ✅ `assets/screenshot-1.png` |
-| 分类 | `theme`（会进入市场的「主题」Tab，支持一键安装/切换/卸载） |
-| 仓库 topic `dsh-plugin` | 需要在 GitHub 仓库设置里添加 |
-| 仓库创建满 1 天 | 由官方 CI 自动检查 |
-
-收录方式是向
-[awesome-dsh-plugin](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin)
-提一个只含单个文件的 PR：
-
-```
-data/plugins/YSDLNGF__dsh-acrylic.yml
-```
-
-```yaml
-url: https://github.com/YSDLNGF/dsh-acrylic
-name: YSDLNGF/dsh-acrylic
-category: theme
-description:
-  en: Windows Acrylic window material plus layered frosted panels for the DeepSeek Harness desktop app.
-  zh: DeepSeek Harness 桌面版的 Windows 亚克力窗口材质与分层雾面效果。
-```
-
-合并后官网自动重建，市场里就能搜到了。
-
-### 第 2 步：让窗口透出壁纸（这一步仍需命令行）
+### 第 2 步：让窗口透出壁纸（这一步需要命令行）
 
 第 1 步只让页面半透明，但窗口本身还是不透明的 —— 壁纸透不出来。
 窗口材质是 Electron `BrowserWindow` 的**构造参数**，只存在于主进程，
 插件（运行在渲染进程侧）碰不到窗口对象，所以必须改 `app.asar`。
 
 这与现有同类插件（如 [dsh-desktop-glass](https://github.com/JianHeShui/dsh-desktop-glass)）
-的处境相同，没有纯插件方案。
+的处境相同，**没有纯插件方案**。
 
 ```powershell
 cd dsh-acrylic
@@ -104,16 +95,51 @@ powershell -ExecutionPolicy Bypass -File .\apply-when-closed.ps1
 2. 自动给 `app.asar` 打**等字节补丁**（主窗口加 `backgroundMaterial: acrylic`）
 3. 自动重启 Harness
 
-**你只需要退出一次，剩下它自己完成。** 不会用命令行的话，
-也可以照着下面「手动」小节做。
+**你只需要退出一次，剩下它自己完成。**
 
-安装完成后，窗口就能透出壁纸了。
+做完这步，窗口才能真正透出壁纸。
+
+### 第 3 步：让它出现在插件市场（可选）
+
+插件市场（dsh-market）的插件列表来自一份目录文件，托管在社区仓库
+[awesome-dsh-plugin](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin)。
+**要被市场搜到，必须向那个仓库提交一个条目文件。** 这不是自动的。
+
+收录要求与当前状态：
+
+| 要求 | 状态 |
+| --- | --- |
+| 根 `package.json` 声明 `dsh.bundle` | ✅ `./plugin/cordis.patch.yml` |
+| 仓库有真实可用代码 | ✅ |
+| `screenshots.json` + 截图 | ✅ `assets/screenshot-1.jpg` |
+| 仓库 topic `dsh-plugin` | ✅ 已添加 |
+| 仓库创建满 1 天 | 由对方 CI 检查 |
+| 条目文件 | ⏳ 待提交 PR |
+
+需要提交的文件（单个 YAML，放在对方仓库 `data/plugins/` 下）：
+
+**`data/plugins/YSDLNGF__dsh-acrylic.yml`**
+
+```yaml
+url: https://github.com/YSDLNGF/dsh-acrylic
+name: YSDLNGF/dsh-acrylic
+category: theme
+description:
+  en: Windows Acrylic window material plus layered frosted panels for the DeepSeek Harness desktop app.
+  zh: DeepSeek Harness 桌面版的 Windows 亚克力窗口材质与分层雾面效果。
+```
+
+分类选 `theme` 的话，合并后会进入插件市场的**「主题」Tab**，
+支持一键安装、切换、卸载。
+
+合并后官网自动重建，市场里就能搜到了。
 
 ---
 
 ## 卸载
 
-**只卸载插件（保留窗口补丁）**：在插件市场里点本插件的「卸载」按钮即可。
+**只卸载插件（保留窗口补丁）**：设置 → **插件**（内置那页），
+找到 `dsh-acrylic`，点「卸载」。
 
 **连同窗口材质一起还原**：
 
@@ -155,8 +181,11 @@ glass.reset()                // 回默认
 
 - **窗口材质补丁在 Harness 更新后失效**。更新会覆盖 `app.asar`，
   重跑一次 `apply-when-closed.ps1` 即可。
-- **插件市场搜索**：需先向 [awesome-dsh-plugin](https://github.com/awesome-dsh-plugin)
-  提交 PR 收录。收录前请用「添加插件」按钮直接贴仓库地址安装。
+- **插件市场至今搜不到**：本插件尚未被
+  [awesome-dsh-plugin](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin)
+  目录收录，因此第三方市场「插件市场」（dsh-market）里搜不到。
+  收录需要向该仓库提交 PR（见「第 3 步」）。
+  **这不影响安装** —— 用内置「插件」页的「添加插件」粘 GitHub 地址即可。
 - **改的是宿主程序**。请自行评估风险；本仓库提供备份与还原路径，
   且补丁脚本在锚点不匹配时会直接退出、不动已安装文件。
 - **Acrylic 失焦会变实**。Windows 降级材质行为，无法绕过。
@@ -180,25 +209,26 @@ glass.reset()                // 回默认
 
 ---
 
-## 致谢
+## 关于本项目
 
-**这一版由 AI 编写。**
+**本项目的代码与文档全部由 AI 编写。**
 
-具体来说：从"我想让 harness 有透明轻薄亚克力效果"这句话开始，
+从用户一句"我想让 harness 有透明轻薄亚克力效果"开始，
 确认需求、逆向 `main.js` 里的窗口参数、发现 `backgroundColor` 与
-`backgroundMaterial` 互斥、逐层定位"发灰"来源、把侧栏收起按钮
-位移的 bug 定位到 `backdrop-filter` 创建包含块、到最后的分层雾面方案，
-全部由 AI Agent 与用户协作完成 —— 包括 `plugin/client.js` 里的每一条规则、
-每一个数值、以及这几百行中文注释。
+`backgroundMaterial` 互斥、逐层定位"发灰"来源、把侧栏收起按钮位移的
+bug 定位到 `backdrop-filter` 创建包含块、到最终的分层雾面方案 ——
+包括 `plugin/client.js` 里的每一条规则、每一个数值、这几百行中文注释，
+以及这份 README，都出自 AI Agent 之手（与用户多轮协作完成）。
 
-AI 在这个项目里也走了不少弯路：曾经连续多轮在错误假设上打转
-（以为调 `backdrop-filter` 的 blur 值就能糊掉背后的文字），
-直到做像素测量才发现它根本没有生效。这些失败结论也一并写进了注释，
+**也走了不少弯路。** 曾经连续多轮在错误假设上打转，以为调
+`backdrop-filter` 的 blur 值就能糊掉背后的文字，直到做像素测量才发现
+它从未生效；也曾把"插件市场"和内置的"添加插件"混为一谈，
+写出了错误的安装说明。这些失败结论都被写进了代码注释和「已知限制」，
 因为**知道什么行不通，和知道什么行得通同样有用**。
 
 如果你也在做类似的事，希望这个仓库能替你省掉那些来回试错的夜晚。
 
-踩过的坑都写在代码注释和「已知限制」里，欢迎提交 Issue 或 PR。
+欢迎提交 Issue 或 PR。
 
 ## License
 
