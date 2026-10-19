@@ -1,5 +1,5 @@
 {
-  "name": "dsh-acrylic",
+  "name": "dsh-acrylic-light",
   "version": "1.0.0",
   "private": true,
   "type": "module",
@@ -41,11 +41,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/YSDLNGF/dsh-acrylic.git"
+    "url": "git+https://github.com/YSDLNGF/dsh-acrylic-light.git"
   },
-  "homepage": "https://github.com/YSDLNGF/dsh-acrylic#readme",
+  "homepage": "https://github.com/YSDLNGF/dsh-acrylic-light#readme",
   "bugs": {
-    "url": "https://github.com/YSDLNGF/dsh-acrylic/issues"
+    "url": "https://github.com/YSDLNGF/dsh-acrylic-light/issues"
   },
   "keywords": [
     "dsh",

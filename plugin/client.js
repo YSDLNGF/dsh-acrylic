@@ -1,5 +1,5 @@
 /**
- * dsh-acrylic —— 浏览器半部。
+ * dsh-acrylic-light —— 浏览器半部。
  *
  * 设计原则（这是和之前几版最不一样的地方）
  * ----------------------------------------
@@ -20,8 +20,8 @@
  * 4. 所有参数走 CSS 变量，设置页拖滑块即时生效，不需要重启。
  */
 
-const NS = 'dsh-acrylic'
-const LOCAL_KEY = 'dsh-acrylic:prefs'
+const NS = 'dsh-acrylic-light'
+const LOCAL_KEY = 'dsh-acrylic-light:prefs'
 
 /** 默认值：全透明，和顶栏完全一致（纯亚克力）。 */
 const DEFAULTS = {
@@ -92,15 +92,15 @@ const CONTROL_STYLE = [
  */
 const GLASS_STYLE = [
   /* ── 根：全部清空，让窗口材质透上来 ─────────────────────────── */
-  'html[data-dsh-acrylic],html[data-dsh-acrylic] body{background:transparent!important}',
-  'html[data-dsh-acrylic] #root{background:transparent!important}',
+  'html[data-dsh-acrylic-light],html[data-dsh-acrylic-light] body{background:transparent!important}',
+  'html[data-dsh-acrylic-light] #root{background:transparent!important}',
 
   /* 深色/浅色两套基色：决定"透出来之后偏冷还是偏暖"。
      DSH 用 body[data-ds-dark-theme] 标深色；同时兼容 html 上带该属性的情况，
      两种都命中同一组值，避免主题切换时出现"透明但颜色错"的一帧。 */
-  'html[data-dsh-acrylic]{--acrylic-surface:rgb(16 18 23);--acrylic-surface-2:rgb(20 22 28);--acrylic-ink:rgb(255 255 255)}',
-  'html[data-dsh-acrylic]:has(body[data-ds-dark-theme]),html[data-dsh-acrylic][data-ds-dark-theme]{--acrylic-surface:rgb(14 16 20);--acrylic-surface-2:rgb(18 20 26);--acrylic-ink:rgb(255 255 255)}',
-  'html[data-dsh-acrylic]:not(:has(body[data-ds-dark-theme])):not([data-ds-dark-theme]){--acrylic-surface:rgb(248 250 252);--acrylic-surface-2:rgb(255 255 255);--acrylic-ink:rgb(15 17 21)}',
+  'html[data-dsh-acrylic-light]{--acrylic-surface:rgb(16 18 23);--acrylic-surface-2:rgb(20 22 28);--acrylic-ink:rgb(255 255 255)}',
+  'html[data-dsh-acrylic-light]:has(body[data-ds-dark-theme]),html[data-dsh-acrylic-light][data-ds-dark-theme]{--acrylic-surface:rgb(14 16 20);--acrylic-surface-2:rgb(18 20 26);--acrylic-ink:rgb(255 255 255)}',
+  'html[data-dsh-acrylic-light]:not(:has(body[data-ds-dark-theme])):not([data-ds-dark-theme]){--acrylic-surface:rgb(248 250 252);--acrylic-surface-2:rgb(255 255 255);--acrylic-ink:rgb(15 17 21)}',
 
   /* ══ 核心策略：整个窗口只留「一层」半透明 ═══════════════════════
      你的观察是对的：每一层都带一点半透明，叠几次就发灰。
@@ -111,12 +111,12 @@ const GLASS_STYLE = [
        设成半透明 → 发灰。
        它被 DSH 的隐藏探针读取后传给 setTitleBarOverlay，
        所以这里必须给 transparent，标题栏才会是纯亚克力。 */
-  'html[data-dsh-acrylic] [class*="_frame"]:has(> [class*="_sidebarCol"], > [class*="_centerCol"]){',
+  'html[data-dsh-acrylic-light] [class*="_frame"]:has(> [class*="_sidebarCol"], > [class*="_centerCol"]){',
   '  background:transparent!important;',
   '  background-image:none!important;',
   '}',
   /* ::before 是标题栏那 40px 的拖动区，也清透明，让亚克力直接透上来。 */
-  'html[data-dsh-acrylic] [class*="_frame"]:has(> [class*="_sidebarCol"], > [class*="_centerCol"])::before{',
+  'html[data-dsh-acrylic-light] [class*="_frame"]:has(> [class*="_sidebarCol"], > [class*="_centerCol"])::before{',
   '  background:transparent!important;',
   '  background-image:none!important;',
   '}',
@@ -131,8 +131,8 @@ const GLASS_STYLE = [
      写在 html 上会被 body 自身的定义覆盖（实测 html 上读出来是空值）。 */
   /* ⚠ 同样要带 body[data-ds-dark-theme]：DSH 的深色块特异性更高，
      只写裸 body 会被压过。 */
-  'html[data-dsh-acrylic] body,',
-  'html[data-dsh-acrylic] body[data-ds-dark-theme]{',
+  'html[data-dsh-acrylic-light] body,',
+  'html[data-dsh-acrylic-light] body[data-ds-dark-theme]{',
   '  --dsw-alias-bg-base:transparent!important;',
   /* ⚠ --dsw-specific-sidebar-fill 必须是 transparent：
      它被两个地方消费 ——
@@ -162,8 +162,8 @@ const GLASS_STYLE = [
        聊天气泡、输入栏                    → 16–18%
        代码块                              → 55%（必须读字）
      主面板与问答正文仍由三列 alpha 控制，默认 0 = 通透。 */
-  'html[data-dsh-acrylic] body,',
-  'html[data-dsh-acrylic] body[data-ds-dark-theme]{',
+  'html[data-dsh-acrylic-light] body,',
+  'html[data-dsh-acrylic-light] body[data-ds-dark-theme]{',
   '  --dsw-alias-bg-layer-1:rgb(20 22 28 / 14%)!important;',
   '  --dsw-alias-bg-layer-2:rgb(20 22 28 / 16%)!important;',
   '  --dsw-alias-bg-layer-3:rgb(20 22 28 / 20%)!important;',
@@ -196,7 +196,7 @@ const GLASS_STYLE = [
   /* 只改 label-* 这三档（正文/次要/辅助文字）。
      刻意**不动** --dsw-static-neutral-bluish-1000：它同时被
      brand-primary / brand-text 引用，改白会把品牌色也弄坏。 */
-  'html[data-dsh-acrylic] body[data-ds-dark-theme]{',
+  'html[data-dsh-acrylic-light] body[data-ds-dark-theme]{',
   '  --dsw-alias-label-primary:rgb(255 255 255)!important;',
   '  --dsw-alias-label-secondary:rgb(240 243 247)!important;',
   '  --dsw-alias-label-tertiary:rgb(232 236 242)!important;',
@@ -210,7 +210,7 @@ const GLASS_STYLE = [
   /* 连带提亮底层静态色：上面几档都引用 bluish-200/300/400/600/700，
      直接在静态色这一层改，能一次覆盖所有引用者（包括写死用它们的组件）。
      ⚠ 不动 bluish-00/50/1000：它们被背景与品牌色共用。 */
-  'html[data-dsh-acrylic] body[data-ds-dark-theme]{',
+  'html[data-dsh-acrylic-light] body[data-ds-dark-theme]{',
   '  --dsw-static-neutral-bluish-400:rgb(228 232 238)!important;',
   '  --dsw-static-neutral-bluish-300:rgb(236 240 245)!important;',
   '  --dsw-static-neutral-bluish-200:rgb(242 245 249)!important;',
@@ -222,24 +222,24 @@ const GLASS_STYLE = [
      alpha 默认 0 = 完全透明（纯亚克力）。
      想给问答正文加一点点底，把 alpha 调到 10–16 即可
      （实色百分比，不会像混壁纸色那样发灰）。 */
-  'html[data-dsh-acrylic] [class*="_sidebarCol"]{',
+  'html[data-dsh-acrylic-light] [class*="_sidebarCol"]{',
   '  background:rgb(20 22 28 / 8%)!important;',
   '  border-right:.5px solid rgb(255 255 255 / 7%)!important;',
   '}',
-  'html[data-dsh-acrylic] [class*="_centerCol"],',
-  'html[data-dsh-acrylic] [class*="_rightbarCol"]{',
+  'html[data-dsh-acrylic-light] [class*="_centerCol"],',
+  'html[data-dsh-acrylic-light] [class*="_rightbarCol"]{',
   '  background:rgb(16 18 23 / 10%)!important;',
   '}',
-  'html[data-dsh-acrylic] [class*="_bottomRow"]{background:transparent!important}',
+  'html[data-dsh-acrylic-light] [class*="_bottomRow"]{background:transparent!important}',
 
   /* 主面板内部的容器同样清透明（ConversationRoot / 聊天区）。
      ⚠ 只清背景色，不动布局：ConversationRoot 还负责 composerSeat 的
      底部渐变与 phase 状态，那些规则保持原样。 */
-  'html[data-dsh-acrylic] [class*="Dc7zOa_root"]{background:transparent!important}',
+  'html[data-dsh-acrylic-light] [class*="Dc7zOa_root"]{background:transparent!important}',
 
-  'html[data-dsh-acrylic] [class*="xz4KEq_root"],',
-  'html[data-dsh-acrylic] [class*="xz4KEq_frame"],',
-  'html[data-dsh-acrylic] [class*="xz4KEq_scroll"]{background:transparent!important}',
+  'html[data-dsh-acrylic-light] [class*="xz4KEq_root"],',
+  'html[data-dsh-acrylic-light] [class*="xz4KEq_frame"],',
+  'html[data-dsh-acrylic-light] [class*="xz4KEq_scroll"]{background:transparent!important}',
 
   /* ══ 浮层统一兜底：悬停预览 / tooltip / 气泡 ═══════════════════
      上面已通过 token 覆盖了浮层底色。但 DSH 有些浮层组件
@@ -250,12 +250,12 @@ const GLASS_STYLE = [
 
      用 [role] 与常见浮层类名筛选，命中面广，
      不影响中层布局（那些没有 role 也不是菜单/浮层）。 */
-  'html[data-dsh-acrylic] [role="tooltip"],',
-  'html[data-dsh-acrylic] [role="menu"],',
-  'html[data-dsh-acrylic] [role="listbox"],',
-  'html[data-dsh-acrylic] [role="dialog"],',
-  'html[data-dsh-acrylic] [role="popover"],',
-  'html[data-dsh-acrylic] [data-radix-popper-content-wrapper] > *{',
+  'html[data-dsh-acrylic-light] [role="tooltip"],',
+  'html[data-dsh-acrylic-light] [role="menu"],',
+  'html[data-dsh-acrylic-light] [role="listbox"],',
+  'html[data-dsh-acrylic-light] [role="dialog"],',
+  'html[data-dsh-acrylic-light] [role="popover"],',
+  'html[data-dsh-acrylic-light] [data-radix-popper-content-wrapper] > *{',
   '  background-color:var(--acrylic-panel-float, rgb(20 22 28 / 18%))!important;',
   '  backdrop-filter:blur(12px) saturate(160%);',
   '  -webkit-backdrop-filter:blur(12px) saturate(160%);',
@@ -273,23 +273,23 @@ const GLASS_STYLE = [
           且因为是实色（不掺壁纸色），不会发灰 —— 这是和低透明度方案的关键差别。
 
      78% 与设置面板同档：读字清晰，观感是磨砂面板。 */
-  'html[data-dsh-acrylic] [data-composer-seat],',
-  'html[data-dsh-acrylic] [class*="Dc7zOa_composerSeat"]{',
+  'html[data-dsh-acrylic-light] [data-composer-seat],',
+  'html[data-dsh-acrylic-light] [class*="Dc7zOa_composerSeat"]{',
   '  background:transparent!important;',
   '}',
   /* active 态 DSH 会盖一条 linear-gradient，清掉避免深色带 */
-  'html[data-dsh-acrylic] [data-phase="active"] [data-composer-seat],',
-  'html[data-dsh-acrylic] [data-phase="active"] [class*="Dc7zOa_composerSeat"]{',
+  'html[data-dsh-acrylic-light] [data-phase="active"] [data-composer-seat],',
+  'html[data-dsh-acrylic-light] [data-phase="active"] [class*="Dc7zOa_composerSeat"]{',
   '  background:transparent!important;',
   '}',
-  'html[data-dsh-acrylic] [data-composer-card],',
-  'html[data-dsh-acrylic] [class*="RlGAzG_card"]{',
+  'html[data-dsh-acrylic-light] [data-composer-card],',
+  'html[data-dsh-acrylic-light] [class*="RlGAzG_card"]{',
   '  background:var(--acrylic-panel-solid, rgb(16 18 22 / 92%))!important;',
   '  border:.5px solid rgb(255 255 255 / 12%)!important;',
   '  box-shadow:0 8px 24px rgb(0 0 0 / 40%),inset 0 1px 0 rgb(255 255 255 / 6%)!important;',
   '}',
-  'html[data-dsh-acrylic] body:not([data-ds-dark-theme]) [data-composer-card],',
-  'html[data-dsh-acrylic] body:not([data-ds-dark-theme]) [class*="RlGAzG_card"]{',
+  'html[data-dsh-acrylic-light] body:not([data-ds-dark-theme]) [data-composer-card],',
+  'html[data-dsh-acrylic-light] body:not([data-ds-dark-theme]) [class*="RlGAzG_card"]{',
   '  background:rgb(250 250 252 / 82%)!important;',
   '  border:.5px solid rgb(15 17 21 / 10%)!important;',
   '}',
@@ -303,10 +303,10 @@ const GLASS_STYLE = [
      深色主题里 --dsw-static-neutral-bluish-00 仍是 #fff，凡是直接用它
      铺底的容器在透明主题里就是一块死白。这里按元素精确处理，
      而不是改那个静态色（那会连累开关滑块/输入框/代码块）。 */
-  'html[data-dsh-acrylic] body[data-ds-dark-theme] [class*="_scroll"],',
-  'html[data-dsh-acrylic] body[data-ds-dark-theme] [class*="_viewport"],',
-  'html[data-dsh-acrylic] body[data-ds-dark-theme] [class*="_paneBody"],',
-  'html[data-dsh-acrylic] body[data-ds-dark-theme] [class*="_tabHostBody"]{',
+  'html[data-dsh-acrylic-light] body[data-ds-dark-theme] [class*="_scroll"],',
+  'html[data-dsh-acrylic-light] body[data-ds-dark-theme] [class*="_viewport"],',
+  'html[data-dsh-acrylic-light] body[data-ds-dark-theme] [class*="_paneBody"],',
+  'html[data-dsh-acrylic-light] body[data-ds-dark-theme] [class*="_tabHostBody"]{',
   '  background:transparent!important;',
   '}',
 
@@ -327,7 +327,7 @@ const GLASS_STYLE = [
 
      ⚠ 不要写成通用的 [class*="_fade"]：聊天区的 _fadeTop/_fadeBottom
      是正常的滚动遮罩（用 mask-image 实现），不该被一起干掉。 */
-  'html[data-dsh-acrylic] [class*="_9lTDKa_fade"]{display:none!important}',
+  'html[data-dsh-acrylic-light] [class*="_9lTDKa_fade"]{display:none!important}',
 
   /* ══ 浮层（设置面板 / 二级菜单 / 对话框）统一磨砂 ══════════════
      实测 DSH 这两类浮层的结构（类名是构建期哈希，但后缀稳定）：
@@ -346,7 +346,7 @@ const GLASS_STYLE = [
 
      做法：给遮罩层和面板各自补上 blur，面板底色再压到半透明。 */
 
-  'html[data-dsh-acrylic]{',
+  'html[data-dsh-acrylic-light]{',
   '  --acrylic-overlay-blur:24px;',
   /* 面板底：深色偏冷、浅色偏白，都留一点透明度让壁纸的色温透进来 */
   '  --acrylic-overlay-panel-dark:rgb(26 28 34 / 78%);',
@@ -354,45 +354,45 @@ const GLASS_STYLE = [
   '}',
 
   /* 遮罩层：原来 --dsw-mask-blur 是 none，补上模糊 */
-  'html[data-dsh-acrylic] body{--dsw-mask-blur:blur(12px)!important}',
+  'html[data-dsh-acrylic-light] body{--dsw-mask-blur:blur(12px)!important}',
 
   /* ── 设置面板 ─────────────────────────────────────────────── */
-  'html[data-dsh-acrylic] [class*="wCInkW_panel"]{',
+  'html[data-dsh-acrylic-light] [class*="wCInkW_panel"]{',
   '  background:var(--acrylic-overlay-panel-dark)!important;',
   '  backdrop-filter:blur(var(--acrylic-overlay-blur)) saturate(150%);',
   '  -webkit-backdrop-filter:blur(var(--acrylic-overlay-blur)) saturate(150%);',
   '}',
-  'html[data-dsh-acrylic] body:not([data-ds-dark-theme]) [class*="wCInkW_panel"]{',
+  'html[data-dsh-acrylic-light] body:not([data-ds-dark-theme]) [class*="wCInkW_panel"]{',
   '  background:var(--acrylic-overlay-panel-light)!important;',
   '}',
 
   /* ── 通用对话框（确认框、命令面板等）────────────────────────── */
-  'html[data-dsh-acrylic] [class*="_dialog_o6lrb"]{',
+  'html[data-dsh-acrylic-light] [class*="_dialog_o6lrb"]{',
   '  background:var(--acrylic-overlay-panel-dark)!important;',
   '  backdrop-filter:blur(var(--acrylic-overlay-blur)) saturate(150%);',
   '  -webkit-backdrop-filter:blur(var(--acrylic-overlay-blur)) saturate(150%);',
   '}',
-  'html[data-dsh-acrylic] body:not([data-ds-dark-theme]) [class*="_dialog_o6lrb"]{',
+  'html[data-dsh-acrylic-light] body:not([data-ds-dark-theme]) [class*="_dialog_o6lrb"]{',
   '  background:var(--acrylic-overlay-panel-light)!important;',
   '}',
 
   /* ── 菜单 / 下拉：它们本来就有 blur(40px)，这里统一强度并确保底色够实 ── */
-  'html[data-dsh-acrylic] [class*="_material_ri079"]{',
+  'html[data-dsh-acrylic-light] [class*="_material_ri079"]{',
   '  backdrop-filter:blur(var(--acrylic-overlay-blur)) saturate(150%)!important;',
   '  -webkit-backdrop-filter:blur(var(--acrylic-overlay-blur)) saturate(150%)!important;',
   '}',
 
   /* 兜底：任何 role=dialog / menu / listbox 的浮层都补上模糊，
      覆盖上面没枚举到的第三方浮层。 */
-  'html[data-dsh-acrylic] [role="dialog"],',
-  'html[data-dsh-acrylic] [role="menu"],',
-  'html[data-dsh-acrylic] [role="listbox"]{',
+  'html[data-dsh-acrylic-light] [role="dialog"],',
+  'html[data-dsh-acrylic-light] [role="menu"],',
+  'html[data-dsh-acrylic-light] [role="listbox"]{',
   '  backdrop-filter:blur(var(--acrylic-overlay-blur)) saturate(150%);',
   '  -webkit-backdrop-filter:blur(var(--acrylic-overlay-blur)) saturate(150%);',
   '}',
 
   /* ── 颗粒感：亚克力的"薄"很大程度来自这点噪点 ─────────────── */
-  'html[data-dsh-acrylic]::after{',
+  'html[data-dsh-acrylic-light]::after{',
   '  content:"";position:fixed;inset:0;z-index:2147483646;pointer-events:none;',
   '  opacity:calc(var(--acrylic-noise) / 100);',
   '  background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'160\' height=\'160\'%3E%3Cfilter id=\'n\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.85\' numOctaves=\'3\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23n)\'/%3E%3C/svg%3E");',
@@ -401,7 +401,7 @@ const GLASS_STYLE = [
 ].join('')
 
 window.__ModuleLoader__.load({
-  id: 'dsh-acrylic',
+  id: 'dsh-acrylic-light',
   factory(require) {
     const React = require('react')
 
@@ -419,9 +419,9 @@ window.__ModuleLoader__.load({
         }
 
         try {
-          ctx.effect(() => ctx.locale.register(NS, DICTIONARIES), 'dsh-acrylic: dictionaries')
+          ctx.effect(() => ctx.locale.register(NS, DICTIONARIES), 'dsh-acrylic-light: dictionaries')
         } catch (error) {
-          console.warn('[dsh-acrylic] 字典注册失败', error)
+          console.warn('[dsh-acrylic-light] 字典注册失败', error)
         }
 
         const injectTag = (text, attr) => {
@@ -432,8 +432,8 @@ window.__ModuleLoader__.load({
           return () => tag.remove()
         }
 
-        const disposeControls = injectTag(CONTROL_STYLE, 'data-dsh-acrylic-controls')
-        const disposeGlass = injectTag(GLASS_STYLE, 'data-dsh-acrylic-style')
+        const disposeControls = injectTag(CONTROL_STYLE, 'data-dsh-acrylic-light-controls')
+        const disposeGlass = injectTag(GLASS_STYLE, 'data-dsh-acrylic-light-style')
 
         let current = { ...DEFAULTS }
 
@@ -441,10 +441,10 @@ window.__ModuleLoader__.load({
         const paint = (state) => {
           current = { ...DEFAULTS, ...state }
           if (current.enabled === false) {
-            root.removeAttribute('data-dsh-acrylic')
+            root.removeAttribute('data-dsh-acrylic-light')
             return
           }
-          root.setAttribute('data-dsh-acrylic', 'true')
+          root.setAttribute('data-dsh-acrylic-light', 'true')
           const set = (name, value) => root.style.setProperty(name, value)
           const alpha = Number(current.alpha)
           // alpha 现在控制「浮层与输入栏的雾面厚度」：
@@ -487,11 +487,11 @@ window.__ModuleLoader__.load({
         ctx.effect(() => () => {
           disposeGlass()
           disposeControls()
-          root.removeAttribute('data-dsh-acrylic')
+          root.removeAttribute('data-dsh-acrylic-light')
           for (const name of ['--acrylic-alpha', '--acrylic-noise']) {
             root.style.removeProperty(name)
           }
-        }, 'dsh-acrylic: paint')
+        }, 'dsh-acrylic-light: paint')
 
         /** 设置页：所有滑块都是即时生效的，改完不用重启。 */
         const Section = () => {

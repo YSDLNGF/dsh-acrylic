@@ -1,8 +1,8 @@
 /**
- * uninstall.mjs —— 移除 dsh-acrylic 插件（install.mjs 的逆操作）
+ * uninstall.mjs —— 移除 dsh-acrylic-light 插件（install.mjs 的逆操作）
  *
  * 做三件事（幂等，可重复执行）：
- *   1. 删除 <profile>/node_modules/dsh-acrylic
+ *   1. 删除 <profile>/node_modules/dsh-acrylic-light
  *   2. 从 <profile>/package.json 移除 bundle 条目与依赖声明
  *   3. 从 <profile>/cordis.patch.yml 移除插入行
  *
@@ -13,7 +13,7 @@
 import { existsSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 
-const PLUGIN = 'dsh-acrylic'
+const PLUGIN = 'dsh-acrylic-light'
 
 function parseArgs(argv) {
   const out = { profile: undefined, dryRun: false }

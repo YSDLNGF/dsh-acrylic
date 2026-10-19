@@ -1,4 +1,4 @@
-# dsh-acrylic 的 bundle patch：把插件插进 profile 的补丁层。
+# dsh-acrylic-light 的 bundle patch：把插件插进 profile 的补丁层。
 - insert:
-    - id: dsh-acrylic
-      name: 'dsh-acrylic'
+    - id: dsh-acrylic-light
+      name: 'dsh-acrylic-light'

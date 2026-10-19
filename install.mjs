@@ -20,7 +20,7 @@ import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const HERE = dirname(fileURLToPath(import.meta.url))
-const PLUGIN = 'dsh-acrylic'
+const PLUGIN = 'dsh-acrylic-light'
 
 /** 常见安装位置，用于自动探测 app.asar。 */
 function detectAsar() {

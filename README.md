@@ -1,4 +1,4 @@
-# dsh-acrylic
+# dsh-acrylic-light
 
 > **本项目的代码与文档均由 AI 编写。**  
 > 从需求讨论、逆向 DSH 窗口参数、调试、到这份 README，全部由 AI Agent 与用户协作完成。
@@ -15,13 +15,13 @@
 
 同一套主题，换不同壁纸的效果 —— 壁纸的颜色和明暗会透上来，界面跟着变，但文字始终清晰：
 
-| 秋叶 | 森林 |
+| 示例 1 | 示例 2 |
 | --- | --- |
-| ![arnaut](assets/screenshot-autumn.jpg) | ![forest](assets/screenshot-forest.jpg) |
+| ![示例 1](assets/示例1.jpg) | ![示例 2](assets/示例2.jpg) |
 
-| 雨天 | 樱花 |
-| --- | --- |
-| ![rain](assets/screenshot-rain.jpg) | ![sakura](assets/screenshot-sakura.jpg) |
+| 示例 3 |
+| --- |
+| ![示例 3](assets/示例3.jpg) |
 
 | 区域 | 表现 |
 | --- | --- |
@@ -62,21 +62,21 @@ DSH 里有两个容易混淆的地方，安装方式完全不同：
 4. 在弹出的输入框里填下面任意一种：
 
    ```
-   https://github.com/YSDLNGF/dsh-acrylic
+   https://github.com/YSDLNGF/dsh-acrylic-light
    ```
 
    也接受这几种等价写法：
 
    ```
-   https://github.com/YSDLNGF/dsh-acrylic.git
-   github:YSDLNGF/dsh-acrylic
+   https://github.com/YSDLNGF/dsh-acrylic-light.git
+   github:YSDLNGF/dsh-acrylic-light
    ```
 
    > 输入框提示是「输入插件的包名、GitHub 仓库地址或本地目录路径」。
    > 本插件尚未发布到 npm，所以请用 **GitHub 地址**，不要填包名。
 
 5. 点「安装」，确认来源，Harness 会自己 clone 到
-   `~/.dsh/profiles/desktop/node_modules/dsh-acrylic`、登记 `bundles`，然后提示重启
+   `~/.dsh/profiles/desktop/node_modules/dsh-acrylic-light`、登记 `bundles`，然后提示重启
 
 重启后进入 **设置 → 通用 → 透明亚克力**，看到滑块就说明页面那半边成功了。
 
@@ -95,7 +95,7 @@ DSH 里有两个容易混淆的地方，安装方式完全不同：
 的处境相同，**没有纯插件方案**。
 
 ```powershell
-cd dsh-acrylic
+cd dsh-acrylic-light
 powershell -ExecutionPolicy Bypass -File .\apply-when-closed.ps1
 ```
 
@@ -128,11 +128,11 @@ powershell -ExecutionPolicy Bypass -File .\apply-when-closed.ps1
 
 需要提交的文件（单个 YAML，放在对方仓库 `data/plugins/` 下）：
 
-**`data/plugins/YSDLNGF__dsh-acrylic.yml`**
+**`data/plugins/YSDLNGF__dsh-acrylic-light.yml`**
 
 ```yaml
-url: https://github.com/YSDLNGF/dsh-acrylic
-name: YSDLNGF/dsh-acrylic
+url: https://github.com/YSDLNGF/dsh-acrylic-light
+name: YSDLNGF/dsh-acrylic-light
 category: theme
 description:
   en: Windows Acrylic window material plus layered frosted panels for the DeepSeek Harness desktop app.
@@ -149,7 +149,7 @@ description:
 ## 卸载
 
 **只卸载插件（保留窗口补丁）**：设置 → **插件**（内置那页），
-找到 `dsh-acrylic`，点「卸载」。
+找到 `dsh-acrylic-light`，点「卸载」。
 
 **连同窗口材质一起还原**：
 

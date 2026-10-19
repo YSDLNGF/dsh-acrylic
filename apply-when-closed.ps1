@@ -67,7 +67,7 @@ function Write-Log([string]$message) {
   Write-Host $line
 }
 
-Write-Log "=== dsh-acrylic helper started (pid $PID) ==="
+Write-Log "=== dsh-acrylic-light helper started (pid $PID) ==="
 Write-Log "asar = $asar"
 
 # ── 等 app.asar 释放 ────────────────────────────────────────
