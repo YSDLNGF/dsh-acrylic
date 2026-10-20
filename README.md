@@ -148,17 +148,46 @@ description:
 
 ## 卸载
 
-**只卸载插件（保留窗口补丁）**：设置 → **插件**（内置那页），
-找到 `dsh-acrylic-light`，点「卸载」。
+### 一键卸载（推荐）
 
-**连同窗口材质一起还原**：
+**双击 `卸载.cmd`** 即可。它会一次做完三件事：
+
+1. 移除插件（目录 / `package.json` / `cordis.patch.yml`）
+2. 还原 `app.asar` 的窗口材质补丁
+3. 清理遗留备份
+
+> **执行前请先从托盘完全退出 DeepSeek Harness。**
+> 窗口材质补丁需要独占 `app.asar`，DSH 在跑就改不了。
+> 脚本会先检测，若发现 DSH 在运行会提示你。
+
+也可以直接用命令行：
+
+```powershell
+node uninstall-all.mjs              # 卸载插件 + 还原窗口材质
+node uninstall-all.mjs --dry-run    # 先看会做什么，不实际修改
+node uninstall-all.mjs --plugin-only  # 只卸插件，保留窗口材质
+node uninstall-all.mjs --keep-backups # 保留备份文件
+```
+
+### 为什么以前卸载麻烦
+
+老版本要两步、还得开命令行：
 
 ```powershell
 node uninstall.mjs
 powershell -ExecutionPolicy Bypass -File .\restore-asar.ps1
 ```
 
-两者都做完再重启，恢复原生外观。
+而且备份散落在不同目录（`backups/`、`glass-v2/backups/`、`tools/backups/`），
+`restore-asar.ps1` 只查其中一处，找不到就只能手动还原。
+
+现在 `uninstall-all.mjs` 会**在多个位置搜索备份**、自动挑最新的一份，
+并在 DSH 占用时给出可直接复制的还原命令。
+
+### 只卸插件、保留窗口材质
+
+设置 → **插件**（内置那页），找到 `dsh-acrylic-light`，点「卸载」。
+窗口材质仍在（窗口继续透出壁纸），只是页面样式恢复原生。
 
 ---
 
