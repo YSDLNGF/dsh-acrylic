@@ -18,6 +18,7 @@
     "install.mjs",
     "uninstall.mjs",
     "apply-when-closed.ps1",
+    "enable-transparency.cmd",
     "restore-asar.ps1",
     "README.md",
     "LICENSE",
