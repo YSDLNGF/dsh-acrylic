@@ -50,8 +50,9 @@ const DICTIONARIES = {
     reset: '恢复默认',
     noticeTitle: '首次使用必读',
     noticeBody:
-      '这个插件分成两部分：页面样式由插件市场负责，但“窗口透出桌面壁纸”需要替换一个窗口材质补丁。'
-      + '补丁没法随插件一起安装，请到 GitHub 仓库下载并运行（README 的“第 2 步”有具体说明）：',
+      '插件分两部分：页面样式已随插件安装好，但“窗口透出桌面壁纸”必须替换窗口材质补丁 —— '
+      + '窗口材质是 Electron 创建窗口时的参数，插件拿不到窗口对象，只能改 app.asar。'
+      + '请下载本仓库，双击其中的 enable-transparency.cmd，退出 Harness 后它会自动打补丁并重启：',
     noticeLink: 'github.com/YSDLNGF/dsh-acrylic-light',
     noticeFoot:
       '不装补丁也能用，只是窗口不会真的透明，主面板会显示为深色。此提示只出现一次。',
@@ -70,9 +71,10 @@ const DICTIONARIES = {
     reset: 'Reset',
     noticeTitle: 'Before you start',
     noticeBody:
-      'This plugin comes in two parts. The page styling installs with the plugin, but showing the desktop '
-      + 'wallpaper through the window requires a window-material patch. The patch cannot ship with the plugin — '
-      + 'download and run it from the GitHub repo (see “Step 2” in the README):',
+      'The plugin has two parts. The page styling is already installed, but showing the desktop wallpaper '
+      + 'through the window requires replacing the window material — that is an Electron BrowserWindow '
+      + 'constructor option, and a plugin cannot reach the window object, so app.asar must be patched. '
+      + 'Download this repo, double-click enable-transparency.cmd, then quit Harness; it patches and relaunches:',
     noticeLink: 'github.com/YSDLNGF/dsh-acrylic-light',
     noticeFoot:
       'The plugin works without it, but the window will not be transparent — the main panel stays dark. '
