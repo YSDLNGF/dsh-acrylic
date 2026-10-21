@@ -35,19 +35,48 @@ function Find-First($paths) {
   return $null
 }
 
-# -- locate app.asar --
+# discover the install directory via the Windows uninstall registry entry.
+# This finds non-standard install locations (e.g. a portable/extracted copy
+# anywhere on disk) without hardcoding any particular path.
+function Get-InstallDirFromRegistry {
+  $roots = @(
+    'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*'
+    'HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*'
+    'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*'
+  )
+  foreach ($r in $roots) {
+    $hits = Get-ItemProperty $r -ErrorAction SilentlyContinue |
+      Where-Object { $_.DisplayName -match 'DeepSeek Harness' -or $_.DisplayLocation -match 'deepseek' }
+    foreach ($h in $hits) {
+      $loc = $null
+      if ($h.InstallLocation) { $loc = $h.InstallLocation }
+      elseif ($h.DisplayIcon -and $h.DisplayIcon -match '^([A-Za-z]:\\.*?)\\') { $loc = $Matches[1] }
+      if ($loc -and (Test-Path (Join-Path $loc 'resources\app.asar'))) { return $loc }
+    }
+  }
+  return $null
+}
+
+# -- locate app.asar (explicit, standard paths, then registry) --
 $asar = $Asar
+if (-not $asar) {
+  # also accept a bare install dir via -Asar
+  if ((Test-Path (Join-Path $asar 'resources\app.asar'))) { $asar = Join-Path $asar 'resources\app.asar' }
+}
 if (-not $asar) {
   $asar = Find-First @(
     'C:\Program Files\DeepSeek Harness\resources\app.asar'
     'C:\Program Files (x86)\DeepSeek Harness\resources\app.asar'
     (Join-Path $env:LOCALAPPDATA 'Programs\deepseek-harness\resources\app.asar')
     (Join-Path $env:LOCALAPPDATA 'DeepSeek Harness\resources\app.asar')
-    'E:\gongju\deepseek\resources\app.asar'
   )
 }
+if (-not $asar) {
+  $installDir = Get-InstallDirFromRegistry
+  if ($installDir) { $asar = Join-Path $installDir 'resources\app.asar' }
+}
 
-# -- locate the executable --
+# -- locate the executable (standard paths, then registry) --
 $exe = $Exe
 if (-not $exe) {
   $exe = Find-First @(
@@ -55,11 +84,20 @@ if (-not $exe) {
     'C:\Program Files (x86)\DeepSeek Harness\DeepSeek Harness.exe'
     (Join-Path $env:LOCALAPPDATA 'Programs\deepseek-harness\DeepSeek Harness.exe')
     (Join-Path $env:LOCALAPPDATA 'DeepSeek Harness\DeepSeek Harness.exe')
-    'E:\gongju\deepseek\DeepSeek Harness.exe'
   )
 }
+if (-not $exe) {
+  $installDir = Get-InstallDirFromRegistry
+  if ($installDir) { $exe = Join-Path $installDir 'DeepSeek Harness.exe' }
+}
 
-if ($asar -eq $null) { Write-Host 'app.asar not found. Pass -Asar <path>.'; exit 2 }
+if ($asar -eq $null) {
+  Write-Host ''
+  Write-Host 'app.asar not found automatically.'
+  Write-Host 'Pass it explicitly:  powershell -File apply-when-closed.ps1 -Asar C:\path\to\resources\app.asar [-NoRestart]'
+  Write-Host ''
+  exit 2
+}
 
 # -- locate node: PATH first, then the runtime bundled with DSH --
 $nodeCmd = (Get-Command node -ErrorAction SilentlyContinue).Source
